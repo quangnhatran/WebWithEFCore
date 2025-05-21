@@ -74,6 +74,11 @@
 	</tbody>
 </table>
 <div class="pagination" style="margin-top: 20px; text-align: center;">
+	@if (ViewBag.CurrentPage > 1)
+	{
+		<a href="?page=1" style="margin: 0 5px; color: lightblue;">⏮</a>
+	}
+
 	@for (int i = 1; i <= ViewBag.TotalPages; i++)
 	{
 		if (i == ViewBag.CurrentPage)
@@ -85,4 +90,31 @@
 			<a href="?page=@i" style="margin: 0 5px; color: lightblue;">@i</a>
 		}
 	}
+
+	@if (ViewBag.CurrentPage < ViewBag.TotalPages)
+	{
+		<a href="?page=@ViewBag.TotalPages" style="margin: 0 5px; color: lightblue;">⏭</a>
+	}
 </div>
+
+@*form nhập số trang cần tìm*@
+<div style="margin-top: 20px; text-align: center;">
+	<label style="color:white">Đi đến trang:</label>
+	<input type="number" id="gotoPage" min="1" max="@ViewBag.TotalPages" style="width: 100px;" placeholder="Số trang" />
+</div>
+
+<script>
+	document.getElementById("gotoPage").addEventListener("keydown", function (e) {
+		if (e.key === "Enter") {
+			e.preventDefault();
+			const page = parseInt(this.value);
+			const total = @ViewBag.TotalPages;
+			if (page >= 1 && page <= total) {
+				window.location.href = "?page=" + page;
+			} else {
+				alert("Trang không hợp lệ!");
+			}
+		}
+	});
+</script>
+

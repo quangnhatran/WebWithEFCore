@@ -17,7 +17,7 @@ namespace EFCORE.Controllers
         }
         #region View_Product
         //Hiển thị danh sách sản phẩm
-        public IActionResult Index(int page = 1, int pageSize = 5)
+        public IActionResult Index(int page = 1, int pageSize = 4)
         {
             var query = _db.Products.Include(x => x.Category).OrderBy(p => p.Id);
 
@@ -66,65 +66,55 @@ namespace EFCORE.Controllers
                 return RedirectToAction("Index");
         }
         #endregion
+        //-----------------------------------------------------
+        #region Update_Product
         //Hiển thị form cập nhật sản phẩm
         public IActionResult Update(int id)
         {
-            var product = _db.Products.Find(id);
-            if (product == null)
-            {
-                return NotFound();
-            }
+            var sp = _db.Products.Find(id);
             //truyền danh sách thể loại cho View để sinh ra điều khiển DropDownList
             ViewBag.CategoryList = _db.Categories.Select(x => new SelectListItem
             {
-
                 Value = x.Id.ToString(),
                 Text = x.Name
             });
-            return View(product);
+            return View(sp);
         }
-        //Xử lý cập nhật sản phẩm
         [HttpPost]
         public IActionResult Update(Product product, IFormFile ImageUrl)
         {
-            if (ModelState.IsValid) //kiem tra hop le
+            var OldProduct = _db.Products.Find(product.Id);
+            if (ImageUrl != null)
             {
-                var existingProduct = _db.Products.Find(product.Id);
-                if (ImageUrl != null)
+                //xử lý upload và lưu ảnh đại diện mới
+                product.ImageUrl = SaveImage(ImageUrl);
+                //xóa ảnh cũ (nếu có)
+                if (!string.IsNullOrEmpty(product.ImageUrl))
                 {
-                    //xu ly upload và lưu ảnh đại diện mới
-                    product.ImageUrl = SaveImage(ImageUrl);
-                    //xóa ảnh cũ (nếu có)
-                    if (!string.IsNullOrEmpty(existingProduct.ImageUrl))
+                    var oldFilePath = Path.Combine(_hosting.WebRootPath, product.ImageUrl);
+                    if (System.IO.File.Exists(oldFilePath))
                     {
-                        var oldFilePath = Path.Combine(_hosting.WebRootPath, existingProduct.ImageUrl);
-                        if (System.IO.File.Exists(oldFilePath))
-                        {
-                            System.IO.File.Delete(oldFilePath);
-                        }
+                        System.IO.File.Delete(oldFilePath);
                     }
                 }
-                else
-                {
-                    product.ImageUrl = existingProduct.ImageUrl;
-                }
-                //cập nhật product vào table Product
-                existingProduct.Name = product.Name;
-                existingProduct.Description = product.Description;
-                existingProduct.Price = product.Price;
-                existingProduct.CategoryId = product.CategoryId;
-                existingProduct.ImageUrl = product.ImageUrl;
-                _db.SaveChanges();
-                TempData["success"] = "Cập nhật sản phẩm thành công";
-                return RedirectToAction("Index");
             }
-            ViewBag.CategoryList = _db.Categories.Select(x => new SelectListItem
+            else
             {
-                Value = x.Id.ToString(),
-                Text = x.Name
-            });
-            return View();
+                product.ImageUrl = OldProduct.ImageUrl;
+                // product.ImageUrl=SaveImage(ImageUrl);
+            }
+            //cập nhật product vào table Product
+            OldProduct.Name = product.Name;
+            OldProduct.Description = product.Description;
+            OldProduct.Price = product.Price;
+            OldProduct.CategoryId = product.CategoryId;
+            OldProduct.ImageUrl = product.ImageUrl;
+            _db.SaveChanges();
+            TempData["success"] = "Cập nhật sản phẩm thành công";
+            return RedirectToAction("Index");
+
         }
+        #endregion
 
 
 
