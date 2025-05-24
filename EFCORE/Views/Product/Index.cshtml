@@ -1,32 +1,6 @@
 ﻿@model List<Product>
- @* <partial name="_ThongBao" /> *@
-@if (TempData["success"] != null)
-{
-	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-	<script>
-		Swal.fire({
-			icon: 'success',
-			title: 'Success',
-			text: @Html.Raw(JsonSerializer.Serialize(TempData["success"])),
-			timer: 2000,
-			showConfirmButton: false
-		});
-	</script>
-}
+ <partial name="_ThongBao" />
 
-@if (TempData["error"] != null)
-{
-	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-	<script>
-		Swal.fire({
-			icon: 'error',
-			title: 'Error',
-			text: @Html.Raw(JsonSerializer.Serialize(TempData["error"])),
-			timer: 2000,
-			showConfirmButton: false
-		});
-	</script>
-}
 
 <div class="row mb-4">
 	<div class="col-md-6">

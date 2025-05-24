@@ -32,6 +32,8 @@ namespace EFCORE.Controllers
             ViewBag.CurrentPage = page;
             ViewBag.TotalPages = totalPages;
 
+            ViewData["BootstrapVersion"] = "v1";
+
             return View(products);
         }
 

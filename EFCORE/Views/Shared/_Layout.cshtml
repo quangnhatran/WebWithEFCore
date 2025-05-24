@@ -4,8 +4,28 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - EFCORE</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+@*     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+
+ *@ 
+ @{
+        var bootstrapVersion = ViewData["BootstrapVersion"]?.ToString();
+    }
+
+    @if (bootstrapVersion == "v1")
+    {
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+    }
+    else if (bootstrapVersion == "v2")
+    {
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap1.css" />
+    }
+    else
+    {
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+    }
+
+
+ <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/EFCORE.styles.css" asp-append-version="true" />
 </head>
 <body>
@@ -24,6 +44,9 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Product" asp-action="Index">Sản Phẩm</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Category" asp-action="Index">Category</a>
                         </li>
                     </ul>
                 </div>
