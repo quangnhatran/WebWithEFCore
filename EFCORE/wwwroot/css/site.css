@@ -2,6 +2,11 @@ body {
     background-color: #0e0e0e;
     color: white;
 }
+#btnLoadMore:hover {
+    background-color: #007bff;
+    color: cornflowerblue;
+    border-color: #007bff;
+}
 
 h2 {
     color: white;
