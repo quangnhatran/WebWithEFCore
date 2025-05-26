@@ -42,7 +42,7 @@
 <nav>
 	<ul class="pagination">
 		<li class="page-item @(ViewBag.CurrentPage == 1 ? "disabled" : "")">
-			<a class="page-link" href="@Url.Action("Index", new { page = ViewBag.CurrentPage - 1 })">Trước</a>
+			<a class="page-link" href="@Url.Action("Index", new { page = ViewBag.CurrentPage - 1 })">⏮</a>
 		</li>
 
 		@for (int i = 1; i <= ViewBag.TotalPages; i++)
@@ -53,7 +53,7 @@
 		}
 
 		<li class="page-item @(ViewBag.CurrentPage == ViewBag.TotalPages ? "disabled" : "")">
-			<a class="page-link" href="@Url.Action("Index", new { page = ViewBag.CurrentPage + 1 })">Sau</a>
+			<a class="page-link" href="@Url.Action("Index", new { page = ViewBag.CurrentPage + 1 })">⏭</a>
 		</li>
 	</ul>
 </nav>
