@@ -19,6 +19,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace EFCORE.Areas.Identity.Pages.Account
 {
@@ -30,13 +31,16 @@ namespace EFCORE.Areas.Identity.Pages.Account
         private readonly IUserEmailStore<ApplicationUser> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
         public RegisterModel(
             UserManager<ApplicationUser> userManager,
             IUserStore<ApplicationUser> userStore,
             SignInManager<ApplicationUser> signInManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender)
+            IEmailSender emailSender,
+            RoleManager<IdentityRole> roleManager
+            )
         {
             _userManager = userManager;
             _userStore = userStore;
@@ -44,6 +48,7 @@ namespace EFCORE.Areas.Identity.Pages.Account
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
+            _roleManager = roleManager;
         }
 
         /// <summary>
@@ -103,22 +108,48 @@ namespace EFCORE.Areas.Identity.Pages.Account
 
             [Required]
             public DateTime BirthDay { get; set; } 
+
+            public string Role { get; set; }
+
+            public IEnumerable<SelectListItem> RoleList { get; set; }
         }
 
 
         public async Task OnGetAsync(string returnUrl = null)
         {
+            //Chèn đoạn code chèn role tự động
+
+            if (!await _roleManager.RoleExistsAsync(SD.Role_Admin))
+            {
+                await _roleManager.CreateAsync(new IdentityRole(SD.Role_Admin));
+            }
+            if (!await _roleManager.RoleExistsAsync(SD.Role_Customer))
+            {
+                await _roleManager.CreateAsync(new IdentityRole(SD.Role_Customer));
+            }
+            if (!await _roleManager.RoleExistsAsync(SD.Role_Employee))
+            {
+                await _roleManager.CreateAsync(new IdentityRole(SD.Role_Employee));
+            }
+            //lấy danh sách role để cung cấp cho giao diện đăng ký
+            Input = new InputModel
+            {
+                RoleList = _roleManager.Roles.Select(r => new SelectListItem
+                {
+                    Text = r.Name,
+                    Value = r.Name
+                })
+            };
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
         }
-
-        public async Task<IActionResult> OnPostAsync(string returnUrl = null)
-        {
+            public async Task<IActionResult> OnPostAsync(string returnUrl = null)
+         {
             returnUrl ??= Url.Content("~/");
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { Email = Input.Email, UserName = Input.Email, FullName = Input.FullName, DateOfBirth     = Input.BirthDay };
+                var user = new ApplicationUser { Email = Input.Email, UserName = Input.Email, FullName = Input.FullName, DateOfBirth = Input.BirthDay };
 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
@@ -127,6 +158,18 @@ namespace EFCORE.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User created a new account with password.");
+
+                    //thêm vai trò cho người dùng mới
+
+                    if(!string.IsNullOrEmpty(Input.Role) && await _roleManager.RoleExistsAsync(Input.Role))
+                    {
+                        await _userManager.AddToRoleAsync(user, Input.Role);
+                    }
+                    else
+                    {
+                        //nếu không có vai trò thì gán mặc định là Customer
+                        await _userManager.AddToRoleAsync(user, SD.Role_Customer);
+                    }
 
                     var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);

@@ -1,5 +1,6 @@
 using EFCORE.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 
 
@@ -9,7 +10,16 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<ApplicationDbContext>(
 options => options.UseSqlServer("name=DefaultConnection"));
-builder.Services.AddDefaultIdentity<ApplicationUser>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
+builder.Services.AddIdentity<ApplicationUser,IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
+builder.Services.AddRazorPages();
+
+builder.Services.ConfigureApplicationCookie(ops =>
+{
+    ops.LoginPath = "/Identity/Account/Login";
+    ops.AccessDeniedPath = "/Identity/Account/AccessDenied";
+
+});
+builder.Services.AddScoped<IEmailSender, EmailSender>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -19,10 +29,6 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
-
-
-
-
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
