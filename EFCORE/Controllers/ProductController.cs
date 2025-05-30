@@ -73,10 +73,10 @@ namespace EFCORE.Controllers
         //-----------------------------------------------------
         #region Update_Product
         //Hiển thị form cập nhật sản phẩm
-        public IActionResult Update(int id)
+        public IActionResult Update(int id, int page = 1)
         {
+            ViewBag.CurrentPage = page;
             var sp = _db.Products.Find(id);
-            //truyền danh sách thể loại cho View để sinh ra điều khiển DropDownList
             ViewBag.CategoryList = _db.Categories.Select(x => new SelectListItem
             {
                 Value = x.Id.ToString(),
@@ -85,17 +85,16 @@ namespace EFCORE.Controllers
             return View(sp);
         }
         [HttpPost]
-        public IActionResult Update(Product product, IFormFile ImageUrl)
+        public IActionResult Update(Product product, IFormFile ImageUrl, int page = 1)
         {
             var OldProduct = _db.Products.Find(product.Id);
             if (ImageUrl != null)
             {
-                //xử lý upload và lưu ảnh đại diện mới
                 product.ImageUrl = SaveImage(ImageUrl);
-                //xóa ảnh cũ (nếu có)
-                if (!string.IsNullOrEmpty(product.ImageUrl))
+
+                if (!string.IsNullOrEmpty(OldProduct.ImageUrl))
                 {
-                    var oldFilePath = Path.Combine(_hosting.WebRootPath, product.ImageUrl);
+                    var oldFilePath = Path.Combine(_hosting.WebRootPath, OldProduct.ImageUrl);
                     if (System.IO.File.Exists(oldFilePath))
                     {
                         System.IO.File.Delete(oldFilePath);
@@ -105,19 +104,19 @@ namespace EFCORE.Controllers
             else
             {
                 product.ImageUrl = OldProduct.ImageUrl;
-                // product.ImageUrl=SaveImage(ImageUrl);
             }
-            //cập nhật product vào table Product
+
             OldProduct.Name = product.Name;
             OldProduct.Description = product.Description;
             OldProduct.Price = product.Price;
             OldProduct.CategoryId = product.CategoryId;
             OldProduct.ImageUrl = product.ImageUrl;
             _db.SaveChanges();
-            TempData["success"] = "Cập nhật sản phẩm thành công";
-            return RedirectToAction("Index");
 
+            TempData["success"] = "Cập nhật sản phẩm thành công";
+            return RedirectToAction("Index", new { page = page }); // 👈 Truyền lại số trang
         }
+
         #endregion
 
 
@@ -133,7 +132,7 @@ namespace EFCORE.Controllers
             {
                 image.CopyTo(filestream);
             }
-            return @"images/products/" + filename;
+            return @"/images/products/" + filename;
         }
         #region Delete_Product
         //Hiển thị form xác nhận xóa sản phẩm

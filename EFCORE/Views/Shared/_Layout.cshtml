@@ -23,8 +23,6 @@
     {
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
     }
-
-
  <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/EFCORE.styles.css" asp-append-version="true" />
 </head>
@@ -42,12 +40,14 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
+                        @if(User.IsInRole(SD.Role_Admin)){
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Product" asp-action="Index">Sản Phẩm</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Category" asp-action="Index">Category</a>
                         </li>
+                        }
 						<partial name="_LoginPartial" />
                     </ul>
                 </div>

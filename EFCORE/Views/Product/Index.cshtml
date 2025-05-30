@@ -36,9 +36,8 @@
 					}
 				</td>
 				<td>
-					<a asp-action="Update" asp-route-id="@x.Id" class="btn btn-success">
-						<i class="bi bi-pencil-square"></i> Edit
-					</a>
+					<a asp-action="Update" asp-route-id="@x.Id" asp-route-page="@ViewBag.CurrentPage"
+					class="btn btn-success">Edit</a>	
 					<a asp-action="Delete" asp-route-id="@x.Id" class="btn btn-danger">
 						<i class="bi bi-trash"></i> Delete
 					</a>
