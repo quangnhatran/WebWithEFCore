@@ -3,8 +3,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
-namespace EFCORE.Controllers
+namespace EFCORE.Areas.Admin.Controllers
 {
+    [Area("Admin")]
     [Authorize(Roles = SD.Role_Admin)]
     public class CategoryController: Controller
     {

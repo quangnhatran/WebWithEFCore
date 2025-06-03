@@ -4,8 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 
-namespace EFCORE.Controllers
+namespace EFCORE.Areas.Customer.Controllers
 {
+    [Area("Customer")]
     [Authorize]
     public class HomeController : Controller
     {

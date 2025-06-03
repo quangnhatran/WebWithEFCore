@@ -4,26 +4,9 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - EFCORE</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
-
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
  
- @{
-        var bootstrapVersion = ViewData["BootstrapVersion"]?.ToString();
-    }
-
-    @if (bootstrapVersion == "v1")
-    {
-        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
-    }
-    else if (bootstrapVersion == "v2")
-    {
-        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap1.css" />
-    }
-    else
-    {
-        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
-    }
- <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/EFCORE.styles.css" asp-append-version="true" />
 </head>
 <body>
@@ -40,13 +23,16 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
+                        @if (User.IsInRole(SD.Role_Admin))
+                        {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="News" asp-action="Index">News</a>
+                                <a class="nav-link text-dark" asp-area="Admin" asp-controller="Product" asp-action="Index">Manager Product</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Contact" asp-action="Index">ConTact</a>
+                                <a class="nav-link text-dark" asp-area="Admin" asp-controller="Category" asp-action="Index">Manager Category</a>
                             </li>
-						<partial name="_LoginPartial" />
+                        }
+                        <partial name="_LoginPartial" />
                     </ul>
                 </div>
             </div>
@@ -60,7 +46,7 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2025 - TranQuangNha - <a asp-area="Admin" asp-controller="Product" asp-action="Index">Admin</a>
+            &copy; 2025 - Tran-Quang-Nha - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

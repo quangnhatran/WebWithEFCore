@@ -109,6 +109,7 @@ namespace EFCORE.Areas.Identity.Pages.Account
             [Required]
             public DateTime BirthDay { get; set; } 
 
+            [Required]
             public string Role { get; set; }
 
             public IEnumerable<SelectListItem> RoleList { get; set; }
